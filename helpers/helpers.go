@@ -17,7 +17,6 @@ func RespondJSON(w *gin.Context, status_code int, data interface{}) {
 	var message Message
 
 	message.StatusCode = status_code
-	//message.Meta
 	message.Data = data
 	w.JSON(200, message)
 }

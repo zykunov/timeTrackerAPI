@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,28 +11,24 @@ import (
 	"github.com/zykunov/timeTracker/models"
 )
 
+// @Summary AddUser
+// @Tags User
+// @Description user add function
+// @Accept json
+// @Produce json
+// @Param input body models.User true "user info"
+// @Success 201 {object} models.User
+// @Failure 404 {object} models.User
+// @Router /useradd [post]
 func AddUser(c *gin.Context) {
 
-	var PassportStruct struct {
-		Passport string `json:"passportNumber"`
-	}
-
-	if c.BindJSON(&PassportStruct) != nil {
+	var user models.User
+	if c.BindJSON(&user) != nil {
 		c.String(400, "parameter error")
 		return
 	}
 
-	//Перевод passportNumber из строки в int
-	passportToTrim := strings.ReplaceAll(PassportStruct.Passport, " ", "")
-	passportToInt, err := strconv.Atoi(passportToTrim)
-	if err != nil {
-		log.Println("error with ATOI")
-	}
-
-	var user models.User
-	user.Passport = passportToInt
-
-	err = models.AddUser(&user)
+	err := models.AddUser(&user)
 	if err != nil {
 		helpers.RespondJSON(c, 404, user)
 		return
@@ -82,35 +78,60 @@ func StopTask(c *gin.Context) {
 
 }
 
-func UpdateArticleById(c *gin.Context) {
-	var article models.Article
-	id := c.Params.ByName("id")
-	err := models.GetArticleById(&article, id)
-	if err != nil {
-		helpers.RespondJSON(c, 404, article)
-	}
-	c.BindJSON(&article)
-	err = models.UpdateArticleById(&article, id)
-	if err != nil {
-		helpers.RespondJSON(c, 404, article)
-	}
-	helpers.RespondJSON(c, 202, article)
-
-}
-
 func DeleteUser(c *gin.Context) {
 	var user models.User
-	passport := c.Params.ByName("passport")
 
-	passportToInt, err := strconv.Atoi(passport)
-	if err != nil {
-		log.Println("error with ATOI")
-	}
-
-	err = models.DeleteUserById(&user, passportToInt)
+	err := models.DeleteUserById(&user, user.ID)
 	if err != nil {
 		helpers.RespondJSON(c, 404, user)
 		return
 	}
 	helpers.RespondJSON(c, 202, user)
+}
+
+func UpdateUserById(c *gin.Context) {
+	var user models.User
+
+	if c.BindJSON(&user) != nil {
+		c.String(400, "parameter error")
+		return
+	}
+
+	err := models.GetUserById(&user, user.ID)
+	if err != nil {
+		helpers.RespondJSON(c, 404, user)
+		return
+	}
+
+	err = models.UpdateUserById(&user, user.ID)
+	if err != nil {
+		helpers.RespondJSON(c, 404, user)
+	}
+	helpers.RespondJSON(c, 202, user)
+}
+
+func GetUser(c *gin.Context) {
+	var user models.User
+
+	passportNumber := c.Query("passportnumber")
+
+	passportSerie, ok := c.GetQuery("passportserie")
+	if !ok {
+		fmt.Println("Parameter does not exist")
+		return
+	}
+
+	serie, _ := strconv.Atoi(passportSerie)
+	number, _ := strconv.Atoi(passportNumber)
+
+	log.Println(serie)
+	log.Println(number)
+
+	err := models.GetUserByPassport(&user, serie, number)
+
+	if err != nil {
+		helpers.RespondJSON(c, 400, user)
+	}
+	helpers.RespondJSON(c, 200, user)
+
 }

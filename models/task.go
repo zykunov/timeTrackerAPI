@@ -1,13 +1,15 @@
 package models
 
 import (
+	"time"
+
 	_ "github.com/lib/pq"
-	"gorm.io/gorm"
 )
 
 type Task struct {
-	gorm.Model
-	ID        uint  `json:"taskID"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	ID        uint  `json:"taskID"; gorm:"primarykey"`
 	TaskStart int64 `json:"taskStarted"`
 	TaskEnd   int64 `json:"taskEnded"`
 	UserId    int   `json:"passportNumber"`

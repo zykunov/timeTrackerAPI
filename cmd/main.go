@@ -14,6 +14,13 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title TimeTracker API
+// @version 1.0
+// @description API application for time tracking
+
+// @host localhost:8080
+// @BasePath /
+
 var err error
 
 func init() {
@@ -32,7 +39,6 @@ func main() {
 
 	dsn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=%s", host, user, dbname, password, sslmode)
 
-	fmt.Println(dsn)
 	storage.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -42,5 +48,6 @@ func main() {
 	storage.DB.AutoMigrate(&models.User{}, &models.Task{})
 
 	r := routers.SetupRouter()
+
 	r.Run()
 }
