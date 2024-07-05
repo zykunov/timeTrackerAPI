@@ -8,7 +8,7 @@ func AddUser(u *User) error {
 	return storage.DB.Create(u).Error
 }
 
-func DeleteUserById(u *User, id uint) error {
+func DeleteUserById(u *User, id string) error {
 	return storage.DB.Where("id = ?", id).Delete(u).Error
 }
 
