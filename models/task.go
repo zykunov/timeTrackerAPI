@@ -9,11 +9,11 @@ import (
 type Task struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	ID        uint  `json:"taskID"; gorm:"primarykey"`
-	TaskStart int64 `json:"taskStarted"`
-	TaskEnd   int64 `json:"taskEnded"`
-	UserId    int   `json:"userId"`
-	TaskTime  int64 `json:"taskTime"`
+	ID        uint    `json:"taskID"; gorm:"primarykey"`
+	TaskStart int64   `json:"taskStarted"`
+	TaskEnd   int64   `json:"taskEnded"`
+	UserId    int     `json:"userId"`
+	TaskTime  float64 `json:"taskTime"`
 }
 
 func (t *Task) TableName() string {

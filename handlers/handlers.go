@@ -69,7 +69,7 @@ func StopTask(c *gin.Context) {
 	}
 
 	task.TaskEnd = time.Now().Unix()
-	task.TaskTime = task.TaskEnd - task.TaskStart
+	task.TaskTime = (float64(task.TaskEnd) - float64(task.TaskStart)) / 3600
 
 	err = models.UpdateTaskById(&task, task.ID)
 	if err != nil {
@@ -110,7 +110,6 @@ func GetWork(c *gin.Context) {
 		return
 	}
 
-	// result := helpers.GetFinalWork(&tasks)
 	helpers.GetFinalWork(&tasks)
 	helpers.RespondJSON(c, 200, tasks)
 
