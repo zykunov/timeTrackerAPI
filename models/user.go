@@ -4,15 +4,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/zykunov/timeTracker/storage"
 )
-
-func GetAllUsers(u *User) error {
-	if err := storage.DB.Find(u).Error; err != nil {
-		return err
-	}
-	return nil
-}
 
 type User struct {
 	ID             uint `json:"ID"; gorm:"primarykey"`

@@ -23,3 +23,10 @@ func GetUserByPassport(u *User, passportSerie int, passportNumber int) error {
 func UpdateUserById(u *User, id uint) error {
 	return storage.DB.Updates(u).Error
 }
+
+func GetAllUsers(u *[]User, limit int, offset int) error {
+	if err := storage.DB.Limit(limit).Offset(offset).Find(u).Error; err != nil {
+		return err
+	}
+	return nil
+}

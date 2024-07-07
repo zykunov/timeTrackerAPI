@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,18 +23,39 @@ import (
 // @Router /useradd [post]
 func AddUser(c *gin.Context) {
 
-	var user models.User
-	if c.BindJSON(&user) != nil {
+	var passport struct {
+		Raw string `json:"passportNumber"`
+	}
+
+	if c.BindJSON(&passport) != nil {
 		c.String(400, "parameter error")
 		return
 	}
 
-	err := models.AddUser(&user)
+	explode := strings.Split(passport.Raw, " ")
+	passportNumber, err := strconv.Atoi(explode[0])
+	if err != nil {
+		c.String(400, "wrong passport")
+		return
+	}
+	passportSerie, err := strconv.Atoi(explode[1])
+	if err != nil {
+		c.String(400, "wrong passport")
+		return
+	}
+
+	var user models.User
+
+	user.PassportNumber = passportNumber
+	user.PassportSerie = passportSerie
+
+	err = models.AddUser(&user)
 	if err != nil {
 		helpers.RespondJSON(c, 404, user)
 		return
 	}
 	helpers.RespondJSON(c, 200, user)
+	log.Println("user added")
 }
 
 func StartTask(c *gin.Context) {
@@ -53,6 +75,8 @@ func StartTask(c *gin.Context) {
 		return
 	}
 	helpers.RespondJSON(c, 200, task)
+	log.Println("task started")
+
 }
 
 func StopTask(c *gin.Context) {
@@ -76,7 +100,7 @@ func StopTask(c *gin.Context) {
 		helpers.RespondJSON(c, 404, task)
 	}
 	helpers.RespondJSON(c, 200, task)
-
+	log.Println("task ended")
 }
 
 func GetWork(c *gin.Context) {
@@ -112,7 +136,7 @@ func GetWork(c *gin.Context) {
 
 	helpers.GetFinalWork(&tasks)
 	helpers.RespondJSON(c, 200, tasks)
-
+	log.Println("get work hours command")
 }
 
 func DeleteUser(c *gin.Context) {
@@ -126,6 +150,8 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 	helpers.RespondJSON(c, 200, user)
+	log.Println("user delete command")
+
 }
 
 func UpdateUserById(c *gin.Context) {
@@ -147,6 +173,7 @@ func UpdateUserById(c *gin.Context) {
 		helpers.RespondJSON(c, 404, user)
 	}
 	helpers.RespondJSON(c, 200, user)
+	log.Println("user update command")
 }
 
 func GetUser(c *gin.Context) {
@@ -172,5 +199,17 @@ func GetUser(c *gin.Context) {
 		helpers.RespondJSON(c, 400, user)
 	}
 	helpers.RespondJSON(c, 200, user)
+	log.Println("get user command")
+}
 
+func GetUsers(c *gin.Context) {
+	var user []models.User
+
+	err := models.GetAllUsers(&user, 5, 5)
+
+	if err != nil {
+		helpers.RespondJSON(c, 400, user)
+	}
+	helpers.RespondJSON(c, 200, user)
+	log.Println("get users command")
 }
