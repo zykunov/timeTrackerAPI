@@ -205,7 +205,15 @@ func GetUser(c *gin.Context) {
 func GetUsers(c *gin.Context) {
 	var user []models.User
 
-	err := models.GetAllUsers(&user, 5, 5)
+	limit := c.Query("limit")
+	offset := c.Query("offset")
+	limitInt, _ := strconv.Atoi(limit)
+	offsetInt, _ := strconv.Atoi(offset)
+
+	log.Println("limit:", limitInt)
+	log.Println("offset:", offsetInt)
+
+	err := models.GetAllUsers(&user, limitInt, offsetInt)
 
 	if err != nil {
 		helpers.RespondJSON(c, 400, user)
