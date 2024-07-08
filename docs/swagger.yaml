@@ -1,0 +1,259 @@
+basePath: /api/v1
+definitions:
+  helpers.GetWork:
+    properties:
+      dateEnd:
+        type: string
+      dateStart:
+        type: string
+      userId:
+        type: integer
+    type: object
+  helpers.TaskStartStop:
+    properties:
+      taskId:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  helpers.UserAddStruct:
+    properties:
+      passportNumber:
+        type: string
+    type: object
+  helpers.UserUpdate:
+    properties:
+      ID:
+        description: '@Description required'
+        type: integer
+      address:
+        type: string
+      name:
+        type: string
+      passportNumber:
+        type: integer
+      passportSerie:
+        type: integer
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
+  models.Task:
+    properties:
+      createdAt:
+        type: string
+      taskEnded:
+        type: integer
+      taskID:
+        type: integer
+      taskStarted:
+        type: integer
+      taskTime:
+        type: number
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      ID:
+        type: integer
+      address:
+        type: string
+      createdAt:
+        type: string
+      name:
+        type: string
+      passportNumber:
+        type: integer
+      passportSerie:
+        type: integer
+      patronymic:
+        type: string
+      surname:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Igor Zykunov
+  description: REST API учета времени задач по пользователям
+  title: time tracker
+  version: "1.0"
+paths:
+  /getusers:
+    get:
+      description: Получение всех пользователей, доступны параметры limit и offset
+        ()
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Get info about users
+      tags:
+      - user
+  /getwork:
+    post:
+      description: Получение трудозатрат по пользователю за период задача-сумма часов
+        и минут с сортировкой от большей затраты к меньшей. Пример даты 2024-07-06
+      parameters:
+      - description: Task JSON
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/helpers.GetWork'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Get work hours
+      tags:
+      - tasks
+  /info:
+    get:
+      description: Получение данных пользователя по серии иномеру паспорта
+      parameters:
+      - in: query
+        name: passportnumber
+        type: string
+      - in: query
+        name: passportserie
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Get info about one user
+      tags:
+      - user
+  /start:
+    post:
+      description: Начало отсчета времени по пользователю и задаче.
+      parameters:
+      - description: Task JSON
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/helpers.TaskStartStop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Start time count
+      tags:
+      - tasks
+  /stop:
+    post:
+      description: 'На вход: Id пользователя и задачи, для которых закончить отсчет
+        времени.'
+      parameters:
+      - description: Task JSON
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/helpers.TaskStartStop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Stop time count
+      tags:
+      - tasks
+  /useradd:
+    post:
+      consumes:
+      - application/json
+      description: Добавление пользователя. Пасппортные данные - строка, разделитель
+        пробел.
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/helpers.UserAddStruct'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: AddUser
+      tags:
+      - user
+  /userdelete/{id}:
+    delete:
+      description: Удаление пользователя
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: User delete
+      tags:
+      - user
+  /userupdate:
+    patch:
+      description: Изменение пользователя
+      parameters:
+      - description: User JSON
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/helpers.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: User update
+      tags:
+      - user
+swagger: "2.0"
