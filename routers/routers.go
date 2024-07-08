@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 		apiV1Group.POST("start", handlers.StartTask)             // Начать отсчет времени по задаче пользователя
 		apiV1Group.POST("stop", handlers.StopTask)               // Закончить отсчет времени по задаче пользователя
 		apiV1Group.GET("info", handlers.GetUser)                 // Получение пользователя
-		apiV1Group.GET("getusers", handlers.GetUsers)            // Получение пользователя
+		apiV1Group.GET("getusers", handlers.GetUsers)            // Получение пользователей
 	}
 
 	return router
