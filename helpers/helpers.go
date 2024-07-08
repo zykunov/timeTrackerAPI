@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zykunov/timeTracker/models"
 )
 
 type Message struct {
@@ -13,10 +12,49 @@ type Message struct {
 	Data       interface{} `json:"data"`
 }
 
+type GetWork struct {
+	ID        int    `json:"userId"`
+	DateStart string `json:"dateStart"`
+	DateEnd   string `json:"dateEnd"`
+}
+
 type GetWorkFinal struct {
 	ID     int     `json:"userId"`
 	TaskId int     `json:"taskId"`
 	Hours  float64 `json:"time"`
+}
+
+type TaskStartStop struct {
+	ID     int `json:"userId"`
+	TaskId int `json:"taskId"`
+}
+
+// @Description limit
+// @Description offset
+type Paging struct {
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
+// @Description passportNumber
+// @Description passportSerie
+type Passport struct {
+	PassportNumber string `json:"passportnumber"`
+	PassportSerie  string `json:"passportserie"`
+}
+
+type UserAddStruct struct {
+	PassportNumber string `json:"passportNumber"`
+}
+
+type UserUpdate struct {
+	ID             uint   `json:"ID"` //@Description required
+	PassportSerie  int    `json:"passportSerie"`
+	PassportNumber int    `json:"passportNumber"`
+	Surname        string `json:"surname"`
+	Name           string `json:"name"`
+	Patronymic     string `json:"patronymic"`
+	Address        string `json:"address"`
 }
 
 func RespondJSON(w *gin.Context, status_code int, data interface{}) {
@@ -26,9 +64,4 @@ func RespondJSON(w *gin.Context, status_code int, data interface{}) {
 	message.StatusCode = status_code
 	message.Data = data
 	w.JSON(200, message)
-}
-
-func GetFinalWork(t *[]models.Task) GetWorkFinal {
-
-	return GetWorkFinal{}
 }

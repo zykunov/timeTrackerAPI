@@ -13,11 +13,11 @@ import (
 )
 
 // @Summary AddUser
-// @Tags User
-// @Description user add function
+// @Tags user
+// @Description Добавление пользователя. Пасппортные данные - строка, разделитель пробел.
 // @Accept json
 // @Produce json
-// @Param input body models.User true "user info"
+// @Param input body helpers.UserAddStruct true "user info"
 // @Success 201 {object} models.User
 // @Failure 404 {object} models.User
 // @Router /useradd [post]
@@ -58,6 +58,14 @@ func AddUser(c *gin.Context) {
 	log.Println("user added")
 }
 
+// StartTask             godoc
+// @Summary      Start time count
+// @Description  Начало отсчета времени по пользователю и задаче.
+// @Tags         tasks
+// @Produce      json
+// @Param        task  body      helpers.TaskStartStop  true  "Task JSON"
+// @Success      200   {object}  models.Task
+// @Router       /start [post]
 func StartTask(c *gin.Context) {
 
 	var task models.Task
@@ -79,6 +87,14 @@ func StartTask(c *gin.Context) {
 
 }
 
+// StopTask             godoc
+// @Summary      Stop time count
+// @Description  На вход: Id пользователя и задачи, для которых закончить отсчет времени.
+// @Tags         tasks
+// @Produce      json
+// @Param        task  body      helpers.TaskStartStop   true  "Task JSON"
+// @Success      200   {object}  models.Task
+// @Router       /stop [post]
 func StopTask(c *gin.Context) {
 	var task models.Task
 
@@ -103,13 +119,17 @@ func StopTask(c *gin.Context) {
 	log.Println("task ended")
 }
 
+// GetWork             godoc
+// @Summary      Get work hours
+// @Description  Получение трудозатрат по пользователю за период задача-сумма часов и минут с сортировкой от большей затраты к меньшей. Пример даты 2024-07-06
+// @Tags         tasks
+// @Produce      json
+// @Param        task  body     helpers.GetWork true  "Task JSON"
+// @Success      200   {object}  models.Task
+// @Router       /getwork [Post]
 func GetWork(c *gin.Context) {
 	var tasks []models.Task
-	var getWork struct {
-		ID        int    `json:"userId"`
-		DateStart string `json:"dateStart"`
-		DateEnd   string `json:"dateEnd"`
-	}
+	var getWork helpers.GetWork
 
 	if c.BindJSON(&getWork) != nil {
 		c.String(400, "parameter error")
@@ -134,11 +154,18 @@ func GetWork(c *gin.Context) {
 		return
 	}
 
-	helpers.GetFinalWork(&tasks)
 	helpers.RespondJSON(c, 200, tasks)
 	log.Println("get work hours command")
 }
 
+// DeleteUser             godoc
+// @Summary      User delete
+// @Description  Удаление пользователя
+// @Tags         user
+// @Produce      json
+// @Param id  path int true "User ID"
+// @Success      200   {object}  models.User
+// @Router /userdelete/{id}  [delete]
 func DeleteUser(c *gin.Context) {
 	var user models.User
 
@@ -154,6 +181,14 @@ func DeleteUser(c *gin.Context) {
 
 }
 
+// UserUpdate             godoc
+// @Summary      User update
+// @Description  Изменение пользователя
+// @Tags         user
+// @Produce      json
+// @Param        user  body      helpers.UserUpdate  true  "User JSON"
+// @Success      200   {object}  models.User
+// @Router       /userupdate [patch]
 func UpdateUserById(c *gin.Context) {
 	var user models.User
 
@@ -176,6 +211,14 @@ func UpdateUserById(c *gin.Context) {
 	log.Println("user update command")
 }
 
+// GetUser             godoc
+// @Summary      Get info about one user
+// @Description  Получение данных пользователя по серии иномеру паспорта
+// @Tags         user
+// @Produce      json
+// @Param        user  query   helpers.Passport  true  "User JSON"
+// @Success      200  {object}  models.User
+// @Router       /info [get]
 func GetUser(c *gin.Context) {
 	var user models.User
 
@@ -202,6 +245,14 @@ func GetUser(c *gin.Context) {
 	log.Println("get user command")
 }
 
+// GetUsers             godoc
+// @Summary      Get info about users
+// @Description  Получение всех пользователей, доступны параметры limit и offset ()
+// @Tags         user
+// @Produce      json
+// @Param        user  query   helpers.Paging  true  "User JSON"
+// @Success      200  {array}  models.User
+// @Router       /getusers [get]
 func GetUsers(c *gin.Context) {
 	var user []models.User
 

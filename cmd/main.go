@@ -7,19 +7,25 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/zykunov/timeTracker/models"
 	"github.com/zykunov/timeTracker/routers"
 	"github.com/zykunov/timeTracker/storage"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	_ "github.com/zykunov/timeTracker/docs"
 )
 
-// @title TimeTracker API
-// @version 1.0
-// @description API application for time tracking
+// @title           time tracker
+// @version         1.0
+// @description     REST API учета времени задач по пользователям
 
-// @host localhost:8080
-// @BasePath /
+// @contact.name   Igor Zykunov
+
+// @host      localhost:8080
+// @BasePath  /api/v1
 
 var err error
 
@@ -48,6 +54,7 @@ func main() {
 	storage.DB.AutoMigrate(&models.User{}, &models.Task{})
 
 	r := routers.SetupRouter()
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run()
 }
