@@ -17,5 +17,5 @@ func UpdateTaskById(t *Task, id uint) error {
 }
 
 func GetWorkById(t *[]Task, id int, dateStart int64, dateEnd int64) error {
-	return storage.DB.Where("user_id = ? AND task_start > ? AND task_end < ?", id, dateStart, dateEnd).Order("task_time DESC").Find(t).Error
+	return storage.DB.Select("user_id", "id", "task_time").Where("user_id = ? AND task_start > ? AND task_end < ?", id, dateStart, dateEnd).Order("task_time DESC").Find(t).Error
 }

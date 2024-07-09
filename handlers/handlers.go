@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -109,7 +110,7 @@ func StopTask(c *gin.Context) {
 	}
 
 	task.TaskEnd = time.Now().Unix()
-	task.TaskTime = (float64(task.TaskEnd) - float64(task.TaskStart)) / 3600
+	task.TaskTime = math.Floor(((float64(task.TaskEnd)-float64(task.TaskStart))/3600)*100) / 100
 
 	err = models.UpdateTaskById(&task, task.ID)
 	if err != nil {

@@ -18,12 +18,6 @@ type GetWork struct {
 	DateEnd   string `json:"dateEnd"`
 }
 
-type GetWorkFinal struct {
-	ID     int     `json:"userId"`
-	TaskId int     `json:"taskId"`
-	Hours  float64 `json:"time"`
-}
-
 type TaskStartStop struct {
 	ID     int `json:"userId"`
 	TaskId int `json:"taskId"`
@@ -55,6 +49,12 @@ type UserUpdate struct {
 	Name           string `json:"name"`
 	Patronymic     string `json:"patronymic"`
 	Address        string `json:"address"`
+}
+
+type GetWorkFinal struct {
+	ID       uint    `json:"Id"`
+	UserId   int     `json:"userId"`
+	TaskTime float64 `json:"taskTime"`
 }
 
 func RespondJSON(w *gin.Context, status_code int, data interface{}) {
